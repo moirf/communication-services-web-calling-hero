@@ -14,7 +14,9 @@ export const buttonStyle = mergeStyles({
   width: '100%',
   marginTop: '2.125rem',
   maxWidth: '18.75rem',
-  minWidth: '12.5rem'
+  minWidth: '12.5rem',
+  background: '#13022f',
+  selectors: {':hover': { background: '#13022f' }}
 });
 export const mainContainerStyle = mergeStyles({
   maxWidth: '46.875rem',
@@ -56,6 +58,7 @@ export const inputBoxStyle = mergeStyles({
 export const inputBoxTextStyle = mergeStyles({
   fontSize: '0.875rem',
   fontWeight: 600,
+  color: '#e7e7e7',
   lineHeight: '1.5rem',
   '::-webkit-input-placeholder': {
     fontSize: '0.875rem',

@@ -31,8 +31,9 @@ const App = (): JSX.Element => {
 
   useEffect(() => {
     const setWindowWidth = (): void => {
-      const width = typeof window !== 'undefined' ? window.innerWidth : 0;
-      setScreenWidth(width);
+      //const width = typeof window !== 'undefined' ? window.innerWidth : 0;
+      //setScreenWidth(width);
+      setScreenWidth(240);
     };
     setWindowWidth();
     window.addEventListener('resize', setWindowWidth);

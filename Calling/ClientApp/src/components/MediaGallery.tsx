@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   mediaGalleryGridStyle,
-  mediaGalleryStyle,
-  mediaGallerySubstageStyle,
-  substageMediaGalleryStyle
+  mediaGalleryStyle
 } from './styles/MediaGallery.styles';
 import { RemoteParticipant, LocalVideoStream } from '@azure/communication-calling';
 import { utils } from '../Utils/Utils';
@@ -25,23 +23,20 @@ export default (props: MediaGalleryProps): JSX.Element => {
   const [gridCol, setGridCol] = useState(1);
   const [gridRow, setGridRow] = useState(1);
 
-  // For now we are only going to support up to a 4x3 grid or 10 participants in a call
+  // For now we are only going to support up to a 4x4 grid or 16 people in a call
   // Since this is a sample, we will just hard-code how we want the grid to scale
   // the rows and columns for the number of users in the call
-  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
-  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4];
+  // total participants  1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16
+  const rows = [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4];
+  const cols = [1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4];
 
-  const dominantParticipantCount = utils.isSafari()
-    ? Constants.DOMINANT_PARTICIPANTS_COUNT_SAFARI
-    : Constants.DOMINANT_PARTICIPANTS_COUNT;
-
-  if (dominantParticipantCount < 0 || dominantParticipantCount > rows.length - 1) {
-    console.warn(`Please use a value for dominant participants between 0 <= x <= ${rows.length - 1}`);
+  if (Constants.DOMINANT_PARTICIPANTS_COUNT < 0 || Constants.DOMINANT_PARTICIPANTS_COUNT > rows.length) {
+    console.warn(`Please use a value for dominant participants between 0 < x < ${rows.length}`);
   }
 
-  const numRemoteParticipantsToRender = Math.min(dominantParticipantCount, rows.length - 1);
+  const numRemoteParticipantsToRender = Math.min(Constants.DOMINANT_PARTICIPANTS_COUNT, rows.length - 1);
 
-  const clamp = (num: number, min: number, max: number): number => Math.min(Math.max(num, min), max);
+  const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
   const getMediaGalleryTilesForParticipants = (
     participants: RemoteParticipant[],
@@ -74,7 +69,7 @@ export default (props: MediaGalleryProps): JSX.Element => {
 
   const getSubstageMediaGalleryTilesForParticipants = (participants: RemoteParticipant[]): JSX.Element[] => {
     const remoteParticipantsMediaGalleryItems = participants.map((participant) => (
-      <div key={`${utils.getId(participant.identifier)}-tile`} className={substageMediaGalleryStyle}>
+      <div key={`${utils.getId(participant.identifier)}-tile`} className={mediaGalleryStyle}>
         <RemoteStreamMedia
           key={utils.getId(participant.identifier)}
           stream={participant.videoStreams[0]}
@@ -90,22 +85,18 @@ export default (props: MediaGalleryProps): JSX.Element => {
   // determine number of rows/columns to add to the grid
   const numberStreamsToRender = useMemo(
     () => clamp(props.remoteParticipants.length, 0, numRemoteParticipantsToRender),
-    [numRemoteParticipantsToRender, props.remoteParticipants.length]
+    [props.remoteParticipants.length]
   );
   if (cols[numberStreamsToRender] !== gridCol) {
     if (numberStreamsToRender > cols.length - 1) {
-      throw new Error(
-        `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`
-      );
+      throw `attempting to set up a number of columns in the gallery for an unexpected number of participants ${numberStreamsToRender}`;
     }
     setGridCol(cols[numberStreamsToRender]);
   }
 
   if (rows[numberStreamsToRender] !== gridRow) {
     if (numberStreamsToRender > rows.length - 1) {
-      throw new Error(
-        `attempting to set up a number of rows in the gallery for an expected number of participants ${numberStreamsToRender}`
-      );
+      throw `attempting to set up a number of rows in the gallery for an expected unnumber of participants ${numberStreamsToRender}`;
     }
     setGridRow(rows[numberStreamsToRender]);
   }
@@ -133,18 +124,10 @@ export default (props: MediaGalleryProps): JSX.Element => {
       <div
         id="video-gallery"
         className={mediaGalleryGridStyle}
-        style={{
-          gridTemplateRows: `repeat(${gridRow}, minmax(0, 1fr))`,
-          gridTemplateColumns: `repeat(${gridCol}, 1fr)`
-        }}
       >
         {getMediaGalleryTilesForParticipants(mainStageParticipants, props.displayName)}
+        {isSubstageVisible && getSubstageMediaGalleryTilesForParticipants(substageParticipants)}
       </div>
-      {isSubstageVisible && (
-        <Stack horizontal className={mediaGallerySubstageStyle}>
-          {getSubstageMediaGalleryTilesForParticipants(substageParticipants)}
-        </Stack>
-      )}
     </Stack>
   );
 };
