@@ -44,7 +44,7 @@ namespace Calling
             // remove the following middleware.
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-Frame-Options", "*");
                 await next.Invoke();
             });
 

@@ -49,7 +49,6 @@ export const localVideoWrapperStyle = mergeStyles({
 export const inputBoxStyle = mergeStyles({
   boxSizing: 'border-box',
   height: '2.5rem',
-  width: '18.75rem',
   border: '1px solid #605e5c',
   borderRadius: '2px',
   backgroundColor: '#FFFFFF'

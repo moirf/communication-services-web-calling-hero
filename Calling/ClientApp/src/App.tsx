@@ -21,7 +21,7 @@ initializeIcons();
 
 const store = createStore(reducer, applyMiddleware(thunk));
 const App = (): JSX.Element => {
-  const [page, setPage] = useState('home');
+  const [page, setPage] = useState('configuration');
   const [callEndReason, setCallEndReason] = useState<CallEndReason | undefined>();
   const [groupId, setGroupId] = useState('');
   const [screenWidth, setScreenWidth] = useState(0);
@@ -36,6 +36,9 @@ const App = (): JSX.Element => {
       setScreenWidth(240);
     };
     setWindowWidth();
+    if (!window.location.href.includes('groupId')){
+      window.history.pushState({}, document.title, window.location.href + '?groupId=' + getGroupId()); // skipping going to home
+    }
     window.addEventListener('resize', setWindowWidth);
     return (): void => window.removeEventListener('resize', setWindowWidth);
   }, []);
