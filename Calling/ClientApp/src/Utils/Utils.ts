@@ -27,7 +27,7 @@ export const utils = {
     }
     throw new Error('Invalid token response');
     },
-    getUsersForRoom: async (): Promise<[CommunicationUserToken]> => {
+    getUsersForRoom: async () => {
         const response = await fetch('/usersForRoom');
         if (response.ok) {
             return response.json();

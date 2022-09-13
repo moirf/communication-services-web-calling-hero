@@ -214,7 +214,7 @@ export const setUserForRoomWithRefreshToken = (userForRoomWithRefreshToken: Toke
     };
 };
 
-export const SetSelectedUserForRoom = (selectedUserForRoom: string): SetSelectedUserForRoomAction => {
+export const setSelectedUserForRoom = (selectedUserForRoom: string): SetSelectedUserForRoomAction => {
     return {
         type: 'SET_SELECTED_USER_FOR_ROOM',
         selectedUserForRoom

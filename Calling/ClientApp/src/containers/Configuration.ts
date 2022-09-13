@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Configuration as ConfigurationScreen, ConfigurationScreenProps, TokenResponse } from '../components/Configuration';
+import { Configuration as ConfigurationScreen, ConfigurationScreenProps } from '../components/Configuration';
 import { setVideoDeviceInfo, setAudioDeviceInfo } from '../core/actions/devices';
 import { initCallAgent, initCallClient, updateDevices, getUserForRoomWithRefreshToken, setSelectedUsersForRoom, getSetRoomId } from '../core/sideEffects';
 import { setMic } from '../core/actions/controls';

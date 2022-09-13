@@ -16,7 +16,6 @@ import {
   Features
 } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
-import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils, RecordingApiResponse, RecordingActionResponse, RecordingLinkResponse } from '../Utils/Utils';
 import {
@@ -33,7 +32,8 @@ import {
   recordingError,
   recordingLink,
   setUserForRoomWithRefreshToken,
-  setRoomId
+  setRoomId,
+  setSelectedUserForRoom
 } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
@@ -352,7 +352,7 @@ export const setSelectedUsersForRoom = (selectedUser: string) => {
         catch (e) {
             throw new Error('Invalid user setSelectedUsersForRoom response');
         }
-        dispatch(setSelectedUsersForRoom(selectedUser));
+        dispatch(setSelectedUserForRoom(selectedUser));
     };
 };
 
