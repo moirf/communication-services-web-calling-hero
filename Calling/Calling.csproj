@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Communication.CallingServer" Version="1.0.0-beta.3" />
     <PackageReference Include="Azure.Communication.Identity" Version="1.0.1" />
+    <PackageReference Include="Azure.Communication.Rooms" Version="1.0.0-beta.1" />
     <PackageReference Include="Azure.Messaging.EventGrid" Version="4.7.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
     <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />

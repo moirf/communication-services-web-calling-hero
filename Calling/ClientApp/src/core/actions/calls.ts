@@ -1,4 +1,5 @@
 import { CallEndReason, Call, RemoteParticipant, CallAgent } from '@azure/communication-calling';
+import { TokenResponse } from '../../components/Configuration';
 import { SelectionState } from '../RemoteStreamSelector';
 
 const SET_CALL_AGENT = 'SET_CALL_AGENT';
@@ -15,10 +16,13 @@ const SET_SERVER_CALL_ID = 'SET_SERVER_CALL_ID';
 const DIALOGBOX_VISIBLE = 'DIALOGBOX_VISIBLE';
 const RECORDING_ERROR = 'RECORDING_ERROR';
 const SET_RECORDING_LINK = 'SET_RECORDING_LINK';
+const SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN = 'SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN';
+const SET_SELECTED_USER_FOR_ROOM = 'SET_SELECTED_USER_FOR_ROOM';
+const SET_ROOM_ID = 'SET_ROOM_ID'
 
 interface SetCallAgentAction {
-  type: typeof SET_CALL_AGENT;
-  callAgent: CallAgent;
+    type: typeof SET_CALL_AGENT;
+    callAgent: CallAgent;
 }
 
 interface CallAddedAction {
@@ -86,6 +90,21 @@ interface RecordingErrorAction {
 interface RecordingLinkAction {
   type: typeof SET_RECORDING_LINK;
   recordingLink: string;
+}
+
+interface SetUserForRoomWithRefreshTokenAction {
+    type: typeof SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN;
+    userForRoomWithRefreshToken: TokenResponse[]
+}
+
+interface SetSelectedUserForRoomAction {
+    type: typeof SET_SELECTED_USER_FOR_ROOM;
+    selectedUserForRoom: string
+}
+
+interface SetRoomIdAction {
+    type: typeof SET_ROOM_ID;
+    roomId: string
 }
 
 export const setCallAgent = (callAgent: CallAgent): SetCallAgentAction => {
@@ -188,6 +207,26 @@ export const recordingLink = (recordingLink: string): RecordingLinkAction => {
   };
 };
 
+export const setUserForRoomWithRefreshToken = (userForRoomWithRefreshToken: TokenResponse[]): SetUserForRoomWithRefreshTokenAction => {
+    return {
+        type: 'SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN',
+        userForRoomWithRefreshToken
+    };
+};
+
+export const SetSelectedUserForRoom = (selectedUserForRoom: string): SetSelectedUserForRoomAction => {
+    return {
+        type: 'SET_SELECTED_USER_FOR_ROOM',
+        selectedUserForRoom
+    };
+};
+export const setRoomId = (roomId: string): SetRoomIdAction => {
+    return {
+        type: 'SET_ROOM_ID',
+        roomId
+    };
+};
+
 export {
   SET_CALL_AGENT,
   CALL_ADDED,
@@ -202,7 +241,10 @@ export {
   SET_SERVER_CALL_ID,
   RECORDING_ERROR,
   DIALOGBOX_VISIBLE,
-  SET_RECORDING_LINK
+  SET_RECORDING_LINK,
+  SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN,
+  SET_SELECTED_USER_FOR_ROOM,
+  SET_ROOM_ID
 };
 
 export type CallTypes =
@@ -219,4 +261,8 @@ export type CallTypes =
   | SetServerCallIdAction
   | RecordingErrorAction
   | DialogBoxVisibleAction
-  | RecordingLinkAction;
+  | RecordingLinkAction
+  | SetUserForRoomWithRefreshTokenAction
+  | SetSelectedUserForRoomAction
+  | SetRoomIdAction
+

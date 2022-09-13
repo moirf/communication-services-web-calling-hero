@@ -1,6 +1,7 @@
 import { Call, CallEndReason, RemoteParticipant, CallAgent } from '@azure/communication-calling';
 import { SelectionState } from 'core/RemoteStreamSelector';
 import { Reducer } from 'redux';
+import { TokenResponse } from '../../components/Configuration';
 import {
   CALL_ADDED,
   CALL_REMOVED,
@@ -16,7 +17,10 @@ import {
   SET_SERVER_CALL_ID,
   DIALOGBOX_VISIBLE,
   RECORDING_ERROR,
-  SET_RECORDING_LINK
+  SET_RECORDING_LINK,
+  SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN,
+  SET_SELECTED_USER_FOR_ROOM,
+  SET_ROOM_ID
 } from '../actions/calls';
 
 export interface CallsState {
@@ -35,6 +39,9 @@ export interface CallsState {
   recordingError: string;
   dialogBoxVisible: boolean;
   recordingLink: string;
+  userForRoomWithRefreshToken: TokenResponse[];
+  selectedUserForRoom: string;
+  roomId: string
 }
 
 const initialState: CallsState = {
@@ -52,7 +59,10 @@ const initialState: CallsState = {
   recordingStatus: 'STOPPED',
   dialogBoxVisible: false,
   recordingError: '',
-  recordingLink: ''
+  recordingLink: '',
+  userForRoomWithRefreshToken: [],
+  selectedUserForRoom: '',
+  roomId:''
 };
 
 export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialState, action: CallTypes): CallsState => {
@@ -92,7 +102,13 @@ export const callsReducer: Reducer<CallsState, CallTypes> = (state = initialStat
     case RECORDING_ERROR:
       return { ...state, recordingError: action.recordingError, dialogBoxVisible: true };
     case SET_RECORDING_LINK:
-      return { ...state, recordingLink: action.recordingLink };
+          return { ...state, recordingLink: action.recordingLink };
+    case SET_USER_FOR_ROOM_WITH_REFRESH_TOKEN:
+          return { ...state, userForRoomWithRefreshToken: action.userForRoomWithRefreshToken };
+    case SET_SELECTED_USER_FOR_ROOM:
+          return { ...state, selectedUserForRoom: action.selectedUserForRoom };
+    case SET_ROOM_ID:
+          return { ...state, roomId: action.roomId };
     default:
       return state;
   }
