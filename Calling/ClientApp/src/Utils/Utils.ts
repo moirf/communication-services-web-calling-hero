@@ -26,7 +26,29 @@ export const utils = {
       return response.json();
     }
     throw new Error('Invalid token response');
-  },
+    },
+    getUsersForRoom: async () => {
+        const response = await fetch('/usersForRoom');
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Invalid user token response');
+    },
+    getRoomId: async (): Promise<string> => {
+        const response = await fetch('/getRoomId');
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Invalid room Id response');
+    },
+    setSelectedUsersForRoom: async (user: string): Promise<void> => {
+        try {
+            await fetch('/setSelectedUsersForRoom/' + user);
+        }
+        catch (e) {
+            throw new Error('Invalid user setSelectedUsersForRoom response');
+        }
+    },
   getFeedbackSettings: async (): Promise<FeedbackSettings> => {
     const response = await fetch('/feedbackSettings');
     if (!response.ok) {

@@ -16,7 +16,6 @@ import {
   Features
 } from '@azure/communication-calling';
 import { AzureCommunicationTokenCredential, CommunicationUserKind } from '@azure/communication-common';
-import { CommunicationUserToken } from '@azure/communication-identity';
 import { Dispatch } from 'redux';
 import { utils, RecordingApiResponse, RecordingActionResponse, RecordingLinkResponse } from '../Utils/Utils';
 import {
@@ -31,7 +30,10 @@ import {
   startRecording,
   stopRecording,
   recordingError,
-  recordingLink
+  recordingLink,
+  setUserForRoomWithRefreshToken,
+  setRoomId,
+  setSelectedUserForRoom
 } from './actions/calls';
 import { setMic, setShareScreen } from './actions/controls';
 import {
@@ -43,12 +45,13 @@ import {
   setVideoDeviceList,
   setDeviceManager
 } from './actions/devices';
-import { setCallClient, setUserId } from './actions/sdk';
+import { setCallClient } from './actions/sdk';
 import { addScreenShareStream, removeScreenShareStream } from './actions/streams';
 import { State } from './reducers';
 import { setLogLevel } from '@azure/logger';
 import RemoteStreamSelector from './RemoteStreamSelector';
 import { Constants } from './constants';
+import { TokenResponse } from '../components/Configuration';
 
 export const setMicrophone = (mic: boolean) => {
   return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
@@ -311,26 +314,57 @@ export const getRecordLink = () => {
     }
   };
 };
+export const getUserForRoomWithRefreshToken = () => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        let usersForRoom: TokenResponse[] = [];
+        const tokenResponse = await utils.getUsersForRoom();
+        for (let i = 0; i < tokenResponse.length; i++) {
+            let userToken = tokenResponse[i].token;
+            let userId = tokenResponse[i].user;
+
+            let tokenCredential = new AzureCommunicationTokenCredential({
+                tokenRefresher: (): Promise<string> => {
+                    return utils.getRefreshedTokenForUser(userId);
+                },
+                refreshProactively: true,
+                token: userToken
+            });
+
+            usersForRoom[i] = { tokenCredential, userId }
+        }
+
+        dispatch(setUserForRoomWithRefreshToken(usersForRoom));
+    };
+};
+
+export const getSetRoomId = () => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        const roomId = await utils.getRoomId();
+        dispatch(setRoomId(roomId));
+    };
+};
+
+export const setSelectedUsersForRoom = (selectedUser: string) => {
+    return async (dispatch: Dispatch): Promise<void> => {
+        try {
+            await fetch('/setSelectedUsersForRoom/' + selectedUser);
+        }
+        catch (e) {
+            throw new Error('Invalid user setSelectedUsersForRoom response');
+        }
+        dispatch(setSelectedUserForRoom(selectedUser));
+    };
+};
 
 export const initCallAgent = (
+  token: AzureCommunicationTokenCredential,
   callClient: CallClient,
   name: string,
   callEndedHandler: (reason: CallEndReason) => void
 ) => {
-  return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
-    const tokenResponse: CommunicationUserToken = await utils.getTokenForUser();
-    const userToken = tokenResponse.token;
-    const userId = tokenResponse.user.communicationUserId;
-    dispatch(setUserId(userId));
+    return async (dispatch: Dispatch, getState: () => State): Promise<void> => {
 
-    const tokenCredential = new AzureCommunicationTokenCredential({
-      tokenRefresher: (): Promise<string> => {
-        return utils.getRefreshedTokenForUser(userId);
-      },
-      refreshProactively: true,
-      token: userToken
-    });
-    const callAgent: CallAgent = await callClient.createCallAgent(tokenCredential, { displayName: name });
+        const callAgent: CallAgent = await callClient.createCallAgent(token, { displayName: name });
 
     if (callAgent === undefined) {
       return;

@@ -28,6 +28,9 @@ export const dropDownStyles: Partial<IDropdownStyles> = {
     fontSize: '0.875rem'
   }
 };
+export const labelStyle = {
+    margin: "17px 0px 10px"
+}
 export const localSettingsContainer = mergeStyles({
   width: '100%',
   maxWidth: '18.75rem',
